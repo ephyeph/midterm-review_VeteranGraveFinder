@@ -93,18 +93,20 @@
                 expanded: false                 // Sets to default collapsed
             });
 
+            cemeteryRenderer = new SimpleRenderer({
+                symbol: new SimpleFillSymbol({
+                    color: "rgba(0,76,115,0.04)",
+                    outline: null
+                })
+            });
+            
+            
             // Create featurelayer from feature service 
             const cemeteryLayer = new FeatureLayer({ 
                 // URL to the service
                 title: "Cemeteries", 
                 url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/ArcGIS/rest/services/Cemetery_Poly/FeatureServer/0",
-            });
-
-            cemeteryLayer.renderer = new SimpleRenderer({
-                symbol: new SimpleFillSymbol({
-                    color: "rgba(0,76,115,0.04)",
-                    outline: null
-                })
+                renderer: cemeteryRenderer
             });
 
             // add layer to the map
