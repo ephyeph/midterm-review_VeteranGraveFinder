@@ -55,8 +55,10 @@
             "esri/widgets/Locate",
             "esri/widgets/Search",
             "esri/widgets/Expand",
-            "esri/layers/FeatureLayer" ],
-            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer) => {
+            "esri/layers/FeatureLayer",
+            "esri/renderers/SimpleRenderer",
+            "esri/symbols/SimpleFillSymbol" ],
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,SimpleRenderer,SimpleFillSymbol) => {
             
             esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";
             
@@ -96,7 +98,13 @@
                 // URL to the service
                 title: "Cemeteries", 
                 url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/ArcGIS/rest/services/Cemetery_Poly/FeatureServer/0",
-            
+            });
+
+            cemeteryLayer.renderer = new SimpleRenderer({
+                symbol: new SimpleFillSymbol({
+                    color: "rgba(0,76,115,0.04)",
+                    outline: null
+                })
             });
 
             // add layer to the map
