@@ -23,9 +23,9 @@
         .addRecordBtn {
             position: absolute;
             z-index: 10;
-            top: 10px;
+            bottom: 10px;
             right: 10px;
-            background-color: #0079c1;
+            background-color: #035e30;
             color: white;
             padding: 8px 16px;
             border: none;
@@ -37,7 +37,7 @@
 
         /*Changes buttons color on mouseover*/
         .addRecordBtn:hover {
-            background-color: #005a87;
+            background-color: #04c292;
         }
 
        </style>
@@ -98,7 +98,13 @@
                 // URL to the service
                 url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/ArcGIS/rest/services/Cemetery_Poly/FeatureServer"
             });
-
+            
+            // Create featurelayer from feature service 
+            const graveLayer = new FeatureLayer({ 
+                // URL to the service
+                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_28f092bf47774a35b1aa173968373955_results/FeatureServer"
+            });
+            
             // add layer to the map
             map.add(cemeteryLayer);
 
@@ -115,7 +121,7 @@
   <body>
     
     <!--Adds the survey button to the mobile website-->
-    <a href="https://arcg.is/1CKPbG0"target="_blank" class="addRecordBtn">Add Record</a>
+    <a href="https://arcg.is/15LbfP0"target="_blank" class="addRecordBtn">Add a Grave</a>
     
     <!--Div that holds the map element and all associated elements-->
     <div id="viewDiv"></div>
