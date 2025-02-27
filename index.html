@@ -118,13 +118,33 @@
                 expression: "$feature.lName + ', ' + $feature.fName"
                 }
             };
+
+            const template = {
+                title: "{milRank} {fName} {mName} {lName}",
+                content: [
+                    {type: "fields",
+                        fieldInfos: [
+                            {
+                                fieldName: "date_of_birth",
+                                label: "Date of Birth"
+                            },
+                            {
+                                fieldName: "date_of_death",
+                                label: "Date of Death"  
+                            }
+                        ]
+                    }
+                ]
+            };
+            
             // Create featurelayer from feature service 
             const graveLayer = new FeatureLayer({
                 title: "Gravesites", 
                 // URL to the service
                 url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_28f092bf47774a35b1aa173968373955_results/FeatureServer",
                 outFields: ["fName", "mName", "lName", "milRank"],
-                labelingInfo: [myGraveLabels]
+                labelingInfo: [myGraveLabels],
+                popupTemplate: template
             });
             
             // add layer to the map
