@@ -166,6 +166,16 @@
             // click event handler for branch choices
             branchElement.addEventListener("click", filterByBranch);
 
+            view.whenLayerView(graveLayer).then((layerView) => {
+                // flash flood warnings layer loaded
+                // get a reference to the flood warnings layerview
+                graveLayerView = layerView;
+
+                // set up UI items
+                branchElement.style.visibility = "visible";
+
+            });
+
             function filterByBranch(event) {
                 const selectedBranch = event.target.getAttribute("data-branch");
                 branchLayerView.filter = {
@@ -180,15 +190,7 @@
                     group: "top-left"
                 });
 
-            view.whenLayerView(graveLayer).then((layerView) => {
-                // flash flood warnings layer loaded
-                // get a reference to the flood warnings layerview
-                graveLayerView = layerView;
 
-                // set up UI items
-                branchElement.style.visibility = "visible";
-
-            });
 
           //clear the filters when user closes the expand widget
           reactiveUtils.when(
