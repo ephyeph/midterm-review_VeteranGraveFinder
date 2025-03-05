@@ -80,13 +80,13 @@
             "esri/widgets/Search",
             "esri/widgets/Expand",
             "esri/layers/FeatureLayer",
-            "esri/renderers/Renderer",
+            "esri/renderers/UniqueValueRenderer",
             "esri/symbols/SimpleFillSymbol",
             "esri/widgets/BasemapGallery",
             "esri/core/reactiveUtils",
             "esri/Graphic",
             "esri/layers/GraphicsLayer" ],
-            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,Renderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer) => {
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,UniqueValueRenderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer) => {
             
             esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";
             let branchLayerView;
@@ -135,6 +135,67 @@
                 ]
             };
 
+                // Create unique value renderer for graveLayer
+                const graveRenderer = new UniqueValueRenderer({
+                field: "branch",
+                uniqueValueInfos: [
+                    {
+                        value: "Army",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "green",
+                            size: "8px"
+                        },
+                        label: "Army"
+                    },
+                    {
+                        value: "Navy",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "blue",
+                            size: "8px"
+                        },
+                        label: "Navy"
+                    },
+                    {
+                        value: "Marines",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "red",
+                            size: "8px"
+                        },
+                        label: "Marines"
+                    },
+                    {
+                        value: "Space Force",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "purple",
+                            size: "8px"
+                        },
+                        label: "Space Force"
+                    },
+                    {
+                        value: "Air Force",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "cyan",
+                            size: "8px"
+                        },
+                        label: "Air Force"
+                    },
+                    {
+                        value: "Coast Guard",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "orange",
+                            size: "8px"
+                        },
+                        label: "Coast Guard"
+                    }
+                ]
+            });
+
             // Create featurelayer from feature service 
             const graveLayer = new FeatureLayer({
                 title: "Gravesites", 
@@ -142,7 +203,8 @@
                 url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_28f092bf47774a35b1aa173968373955_results/FeatureServer",
                 outFields: ["fName", "mName", "lName", "milRank", "branch"],
                 labelingInfo: [myGraveLabels],
-                popupTemplate: template
+                popupTemplate: template,
+                renderer: graveRenderer
             });
 
             // Creates map element
