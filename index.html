@@ -168,8 +168,10 @@
 
             function filterByBranch(event) {
                 const selectedBranch = event.target.getAttribute("data-branch");
-                branchLayerView.filter = {
-                    where: "branch = '" + selectedBranch + "'"
+                if (branchLayerView) {
+                    branchLayerView.filter = {
+                        where: "branch = '" + selectedBranch + "'"
+                    };
                 };
             ;}
             
@@ -194,7 +196,9 @@
           reactiveUtils.when(
             () => !branchExpand.expanded,
             () => {
-              branchLayerView.filter = null;
+                if (branchLayerView) {
+                        branchLayerView.filter = null;
+                    }
             }
           );
 
