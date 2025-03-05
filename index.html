@@ -58,8 +58,8 @@
             "esri/layers/FeatureLayer",
             "esri/renderers/Renderer",
             "esri/symbols/SimpleFillSymbol",
-            "esri/widgets/Bookmarks" ],
-            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,Renderer,SimpleFillSymbol, Bookmarks) => {
+            "esri/widgets/BasemapGallery" ],
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,Renderer,SimpleFillSymbol, BasemapGallery) => {
             
             esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";
             
@@ -80,7 +80,19 @@
             const locateBtn = new Locate({
                 view: view
             });
-
+            
+            //Creates a basemap gallery
+            const basemapGallery = new BasemapGallery({
+                view: view,        
+            });
+            
+            let baseGalleryExpand = new Expand({
+                expandIcon: "basemap",
+                view: view,
+                content: basemapGallery,
+                expanded: false,
+                });
+            
             // Creates a search feature
             const searchWidget = new Search({
                 view: view
@@ -157,6 +169,9 @@
             
             // Add the search widget to the top-left corner of the view
             view.ui.add(searchExpand, "top-left");
+
+            //Adds a Basemap Gallery to top right corner
+            view.ui.add(baseGalleryExpand,"top-right")
         });
 
     </script>
