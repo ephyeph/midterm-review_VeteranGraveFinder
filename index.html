@@ -159,28 +159,18 @@
                 zoom: 17                    
             });
 
-            function filterByBranch(event) {
-                const selectedBranch = event.target.getAttribute("branch");
-                branchLayerView.filter = {
-                    where: "branch = '" + selectedBranch + "'"
-                };
-            ;}
-
             const branchNodes = document.querySelectorAll(`.branch-item`);
             const branchElement = document.getElementById("branch-filter");
 
             // click event handler for branch choices
             branchElement.addEventListener("click", filterByBranch);
 
-            
-            view.whenLayerView(graveLayer).then((layerView) => {
-                branchLayerView = layerView;
-                // set up UI items
-                branchElement.style.visibility = "visible";
-
-            });
-
-
+            function filterByBranch(event) {
+                const selectedBranch = event.target.getAttribute("branch");
+                branchLayerView.filter = {
+                    where: "branch = '" + selectedBranch + "'"
+                };
+            ;}
             
             const branchExpand = new Expand({
                     view: view,
@@ -188,8 +178,13 @@
                     expandIcon: "filter",
                     group: "top-left"
                 });
+               
+            view.whenLayerView(graveLayer).then((layerView) => {
+                branchLayerView = layerView;
+                // set up UI items
+                branchElement.style.visibility = "visible";
 
-
+            });
 
           //clear the filters when user closes the expand widget
           reactiveUtils.when(
