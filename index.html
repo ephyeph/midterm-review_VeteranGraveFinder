@@ -79,12 +79,22 @@
             // Bookmarks
             const bookmarks = new Bookmarks({
             view: view,
-            // allows bookmarks to be added, edited, or deleted
-            dragEnabled: true,
-            visibleElements: {
-                addBookmarkButton: true,
-                editBookmarkButton: true
-            }
+            bookmarks: [
+                new Bookmark({
+                    name: "Union Cemetery",
+                    viewpoint: {
+                        type: "extent",
+                        spatialReference: {
+                            wkid: 102100
+                        },
+                        xmin: -88.30,
+                        ymin: 43.973,
+                        xmax: -88.31,
+                        ymax: 43.975
+                    }
+                })
+            ]
+            
             });
 
             //Expand Function for Bookmarks
