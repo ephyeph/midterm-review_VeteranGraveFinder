@@ -57,8 +57,9 @@
             "esri/widgets/Expand",
             "esri/layers/FeatureLayer",
             "esri/renderers/Renderer",
-            "esri/symbols/SimpleFillSymbol" ],
-            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,Renderer,SimpleFillSymbol) => {
+            "esri/symbols/SimpleFillSymbol",
+            "esri/widgets/Bookmarks" ],
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,Renderer,SimpleFillSymbol, Bookmarks) => {
             
             esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";
             
@@ -67,6 +68,24 @@
                 basemap: "streets",       // sets initial basemap
             });
             
+            // Bookmarks
+            const bookmarks = new Bookmarks({
+            view: view,
+            // allows bookmarks to be added, edited, or deleted
+            dragEnabled: true,
+            visibleElements: {
+                addBookmarkButton: true,
+                editBookmarkButton: true
+            }
+            });
+
+            //Expand Function for Bookmarks
+            const bkExpand = new Expand({
+            view: view,
+            content: bookmarks,
+            expanded: true
+            });
+
             // Creates map view
             const view = new MapView({
                 container: "viewDiv",       // Reference to the DOM node that will contain the view
@@ -151,8 +170,12 @@
             map.add(cemeteryLayer);
             map.add(graveLayer);
 
+            // Add the widget to the top-right corner of the view
+            view.ui.add(bkExpand, "top-right");
+
             // Add the locate widget to the top left corner of the view
             view.ui.add(locateBtn, "top-left");
+            
             // Add the search widget to the top-left corner of the view
             view.ui.add(searchExpand, "top-left");
         });
