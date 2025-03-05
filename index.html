@@ -67,8 +67,8 @@
        </style>
 
     <!--importing the css and libraries for esri.js-->
-    <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.31/"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.32/"></script>
   
     <!--Loading the modules-->
     <script>
@@ -172,6 +172,13 @@
                     where: "branch = '" + selectedBranch + "'"
                 };
             ;}
+            
+            const branchExpand = new Expand({
+                    view: view,
+                    content: branchElement,
+                    expandIcon: "filter",
+                    group: "top-left"
+                });
 
             view.whenLayerView(graveLayer).then((layerView) => {
                 // flash flood warnings layer loaded
@@ -180,12 +187,7 @@
 
                 // set up UI items
                 branchElement.style.visibility = "visible";
-                const branchExpand = new Expand({
-                    view: view,
-                    content: branchElement,
-                    expandIcon: "filter",
-                    group: "top-left"
-                });
+
             });
 
           //clear the filters when user closes the expand widget
