@@ -85,8 +85,9 @@
             "esri/widgets/BasemapGallery",
             "esri/core/reactiveUtils",
             "esri/Graphic",
-            "esri/layers/GraphicsLayer" ],
-            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,UniqueValueRenderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer) => {
+            "esri/layers/GraphicsLayer",
+            "esri/widgets/Legend" ],
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,UniqueValueRenderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer, Legend) => {
             
             esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";
             let branchLayerView;
@@ -291,7 +292,26 @@
                 content: searchWidget,  
                 expanded: false                 // Sets to default collapsed
             });
-                       
+                
+            // Creates a legend
+            const legend = new Legend({
+                view: view,
+                layerInfos: [
+                    {
+                        layer: graveLayer,
+                        title: "Gravesites"
+                    }
+                ]
+            });
+
+            // Allows search feature to collapse
+            let legendExpand = new Expand({
+                expandIcon: "Legend",           // sets icon of widget button
+                view: view,         
+                content: legend,  
+                expanded: false                 // Sets to default collapsed
+            });
+
             // Add the locate widget to the top left corner of the view
             view.ui.add(locateBtn, "top-left");
             
@@ -303,6 +323,9 @@
 
             //Adds a Basemap Gallery to top right corner
             view.ui.add(baseGalleryExpand,"top-right")
+
+            // Add the legend to the bottom right corner of the view
+            view.ui.add(legendExpand, "top-right");
         });
 
     </script>
