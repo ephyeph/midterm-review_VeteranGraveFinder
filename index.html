@@ -173,8 +173,7 @@
             function filterByBranch(event) {
                 const selectedBranch = event.target.getAttribute("branch");
                 branchLayerView.filter = {
-                    where: "branch = '" + selectedBranch + "'",
-                    console.log(selectedBranch)
+                    where: "branch = '" + selectedBranch + "'"
                 };
             ;}
             
