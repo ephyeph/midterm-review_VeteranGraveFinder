@@ -68,6 +68,14 @@
                 basemap: "streets",       // sets initial basemap
             });
             
+            // Creates map view
+            const view = new MapView({
+                container: "viewDiv",       // Reference to the DOM node that will contain the view
+                map: map,                   // References the map object
+                center: [-88.276,43.981],   // Calumet County
+                zoom: 13                    
+            });
+            
             // Bookmarks
             const bookmarks = new Bookmarks({
             view: view,
@@ -86,14 +94,6 @@
             expanded: true
             });
 
-            // Creates map view
-            const view = new MapView({
-                container: "viewDiv",       // Reference to the DOM node that will contain the view
-                map: map,                   // References the map object
-                center: [-88.276,43.981],   // Calumet County
-                zoom: 13                    
-            });
-            
             // Creates locator button 
             const locateBtn = new Locate({
                 view: view
