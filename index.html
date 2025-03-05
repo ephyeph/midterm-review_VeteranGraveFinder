@@ -72,36 +72,8 @@
             const view = new MapView({
                 container: "viewDiv",       // Reference to the DOM node that will contain the view
                 map: map,                   // References the map object
-                center: [-88.276,43.981],   // Calumet County
-                zoom: 13                    
-            });
-            
-            // Bookmarks
-            const bookmarks = new Bookmarks({
-            view: view,
-            bookmarks: [
-                new Bookmark({
-                    name: "Union Cemetery",
-                    viewpoint: {
-                        type: "extent",
-                        spatialReference: {
-                            wkid: 102100
-                        },
-                        xmin: -88.30,
-                        ymin: 43.973,
-                        xmax: -88.31,
-                        ymax: 43.975
-                    }
-                })
-            ]
-            
-            });
-
-            //Expand Function for Bookmarks
-            const bkExpand = new Expand({
-            view: view,
-            content: bookmarks,
-            expanded: false
+                center: [-88.311315,43.9742216],   // Calumet County
+                zoom: 16                    
             });
 
             // Creates locator button 
@@ -179,9 +151,6 @@
             // add layer to the map
             map.add(cemeteryLayer);
             map.add(graveLayer);
-
-            // Add the widget to the top-right corner of the view
-            view.ui.add(bkExpand, "top-right");
 
             // Add the locate widget to the top left corner of the view
             view.ui.add(locateBtn, "top-left");
