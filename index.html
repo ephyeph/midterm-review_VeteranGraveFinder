@@ -1,159 +1,352 @@
 <!DOCTYPE html>
-<html>
-<head>
+ <html>
+  <head>
+    
+    <!--Meta for the browser to allow mobile first design-->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    
+    <title>Veteran Grave Locator</title>
 
-<!--Meta for the browser to allow mobile first design-->
-<meta charset="utf-8" />
-<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <!--Adds CSS for the survey button-->
+    <style>
+        html,
+        body,
+        #viewDiv {
+         padding: 0;
+         margin: 0;
+         height: 100%;
+         width: 100%;
+        }
 
-<title>Veteran Grave Locator</title>
+        #branch-filter {
+            height: 240px;
+            width: 100%;
+            visibility: hidden;
+        }
 
-<!--Adds CSS for the survey button-->
-<style>
-    html,
-    body,
-    #viewDiv {
-     padding: 0;
-     margin: 0;
-     height: 100%;
-     width: 100%;
-    }
+        .branch-item {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            vertical-align: baseline;
+            cursor: pointer;
+            height: 40px;
+        }
 
-    #branch-filter {
-        height: 240px;
-        width: 100%;
-        visibility: hidden;
-    }
+        .branch-item:focus {
+            background-color: dimgrey;
+        }
 
-    .branch-item {
-        width: 100%;
-        padding: 12px;
-        text-align: center;
-        vertical-align: baseline;
-        cursor: pointer;
-        height: 40px;
-    }
+        .branch-item:hover {
+            background-color: dimgrey;
+        }
 
-    .branch-item:focus {
-        background-color: dimgrey;
-    }
 
-    .branch-item:hover {
-        background-color: dimgrey;
-    }
+        /*Sets position and appearance of the survey button*/
+        .addRecordBtn {
+            position: absolute;
+            z-index: 10;
+            top: 15px;
+            left: 50px;
+            background-color: #035e30;
+            color: white;
+            padding: 4px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
 
-    /*Sets position and appearance of the survey button*/
-    .addRecordBtn {
-        position: absolute;
-        z-index: 10;
-        top: 15px;
-        left: 50px;
-        background-color: #035e30;
-        color: white;
-        padding: 4px 16px;
-        border: none;
-        border-radius: 4px;
-        font-size: 14px;
-        cursor: pointer;
-        text-decoration: none;
-    }
+        /*Changes buttons color on mouseover*/
+        .addRecordBtn:hover {
+            background-color: #04c292;
+        }
 
-    /*Changes buttons color on mouseover*/
-    .addRecordBtn:hover {
-        background-color: #04c292;
-    }
+       </style>
 
-   </style>
+    <!--importing the css and libraries for esri.js-->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.32/"></script>
+  
+    <!--Loading the modules-->
+    <script>
+        require([
+            "esri/config", 
+            "esri/Map", 
+            "esri/views/MapView",
+            "esri/widgets/Locate",
+            "esri/widgets/Search",
+            "esri/widgets/Expand",
+            "esri/layers/FeatureLayer",
+            "esri/renderers/UniqueValueRenderer",
+            "esri/symbols/SimpleFillSymbol",
+            "esri/widgets/BasemapGallery",
+            "esri/core/reactiveUtils",
+            "esri/Graphic",
+            "esri/layers/GraphicsLayer",
+            "esri/widgets/Legend" ],
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,UniqueValueRenderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer, Legend) => {
+            
+            esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";
+            let branchLayerView;
 
-<!--importing the css and libraries for esri.js-->
-<link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
-<script src="https://js.arcgis.com/4.32/"></script>
+            // Create featurelayer from feature service 
+            const cemeteryLayer = new FeatureLayer({ 
+                // URL to the service
+                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/ArcGIS/rest/services/Cemetery_Poly/FeatureServer"
+            });
+            
+            //const to make labels
+            const myGraveLabels = {
+                symbol: {
+                type: "text",
+                color: "Red",
+                haloColor: "#FFFFFF",
+                haloSize: "2px",
+                font: {
+                    size: "12px",
+                    family: "Noto Sans",
+                    style: "italic",
+                    weight: "normal"
+                }
+                },
+                labelPlacement: "above-right",
+                labelExpressionInfo: {
+                expression: "$feature.lName + ', ' + $feature.fName"
+                }
+            };
 
-<!--Loading the modules-->
-<script>
-    require([
-        "esri/config", 
-        "esri/Map", 
-        "esri/views/MapView",
-        "esri/widgets/Locate",
-        "esri/widgets/Search",
-        "esri/widgets/Expand",
-        "esri/layers/FeatureLayer",
-        "esri/renderers/UniqueValueRenderer",
-        "esri/symbols/SimpleFillSymbol",
-        "esri/widgets/BasemapGallery",
-        "esri/core/reactiveUtils",
-        "esri/Graphic",
-        "esri/layers/GraphicsLayer",
-        "esri/widgets/Legend",
-        "esri/widgets/Measurement"
-        ],
-        (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer, UniqueValueRenderer, SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer, Legend, Measurement) => {
+            const template = {
+                title: "{milRank} {fName} {mName} {lName}",
+                content: [
+                    {type: "fields",
+                        fieldInfos: [
+                            {
+                                fieldName: "birthDate",
+                                label: "Date of Birth"
+                            },
+                            {
+                                fieldName: "deathDate",
+                                label: "Date of Death"  
+                            }
+                        ]
+                    }
+                ]
+            };
 
-        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurFoJhgAIY5vGdEdRRAp_EKP3hX46okWbzREzvFOzP3eLMTfinmEi1544H3VrGFnlV6so5dUw7YSu9YGDC-954nuy6aTLI9VPTXITBZEeNsSF0B_tJQ2mneOXc37qlXwggQdzOgIhxiVPZ-epbypcjNDg4G07YzvTAEXRmJH4Uzp6A7Fe2exbTdDRIfg-kRmtFyJLbin0Nuyzz1scUr_FYroHbqoG10J0HaQOMyE-HceUAT1_1S7BNGTZ";  
-
-        // Setting up the map and the view
-        const map = new Map({
-            basemap: "streets"  // Initial basemap
-        });
-
-        const view = new MapView({
-            container: "viewDiv",  // Where the map will appear
-            map: map,  // The map itself
-            center: [-88.311315,43.9742216],  // Starting location (Calumet County)
-            zoom: 17  // Initial zoom level
-        });
-
-        // Re-adding GraveLayer and UniqueValueRenderer
-        const graveLayer = new FeatureLayer({
-            title: "Gravesites", 
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_28f092bf47774a35b1aa173968373955_results/FeatureServer",
-            outFields: ["fName", "mName", "lName", "milRank", "branch"],
-            renderer: new UniqueValueRenderer({
+                // Create unique value renderer for graveLayer
+                const graveRenderer = new UniqueValueRenderer({
                 field: "branch",
                 uniqueValueInfos: [
-                    { value: "Army", symbol: { type: "simple-marker", color: "green", size: "8px" }, label: "Army" },
-                    { value: "Navy", symbol: { type: "simple-marker", color: "blue", size: "8px" }, label: "Navy" },
-                    { value: "Marines", symbol: { type: "simple-marker", color: "red", size: "8px" }, label: "Marines" },
-                    { value: "Air Force", symbol: { type: "simple-marker", color: "cyan", size: "8px" }, label: "Air Force" },
-                    { value: "Coast Guard", symbol: { type: "simple-marker", color: "orange", size: "8px" }, label: "Coast Guard" }
+                    {
+                        value: "Army",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "green",
+                            size: "8px"
+                        },
+                        label: "Army"
+                    },
+                    {
+                        value: "Navy",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "blue",
+                            size: "8px"
+                        },
+                        label: "Navy"
+                    },
+                    {
+                        value: "Marines",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "red",
+                            size: "8px"
+                        },
+                        label: "Marines"
+                    },
+                    {
+                        value: "Space Force",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "purple",
+                            size: "8px"
+                        },
+                        label: "Space Force"
+                    },
+                    {
+                        value: "Air Force",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "cyan",
+                            size: "8px"
+                        },
+                        label: "Air Force"
+                    },
+                    {
+                        value: "Coast Guard",
+                        symbol: {
+                            type: "simple-marker",
+                            color: "orange",
+                            size: "8px"
+                        },
+                        label: "Coast Guard"
+                    }
                 ]
-            })
+            });
+
+            // Create featurelayer from feature service 
+            const graveLayer = new FeatureLayer({
+                title: "Gravesites", 
+                // URL to the service
+                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_28f092bf47774a35b1aa173968373955_results/FeatureServer",
+                outFields: ["fName", "mName", "lName", "milRank", "branch"],
+                labelingInfo: [myGraveLabels],
+                popupTemplate: template,
+                renderer: graveRenderer
+            });
+
+            // Creates map element
+            const map = new Map({
+                basemap: "streets",       // sets initial basemap
+            });
+            
+            map.add(cemeteryLayer);
+            map.add(graveLayer);
+
+            // Creates map view
+            const view = new MapView({
+                container: "viewDiv",       // Reference to the DOM node that will contain the view
+                map: map,                   // References the map object
+                center: [-88.311315,43.9742216],   // Calumet County
+                zoom: 17                    
+            });
+
+            const graphicsLayer = new GraphicsLayer();  
+            map.add(graphicsLayer);
+
+            const branchNodes = document.querySelectorAll(.branch-item);
+            const branchElement = document.getElementById("branch-filter");
+
+            // click event handler for branch choices
+            branchElement.addEventListener("click", filterByBranch);
+
+            function filterByBranch(event) {
+                const selectedBranch = event.target.getAttribute("data-branch");
+                branchLayerView.filter = {
+                    where: "branch = '" + selectedBranch + "'"
+                };
+                console.log(selectedBranch);
+            ;}
+            
+            const branchExpand = new Expand({
+                    view: view,
+                    content: branchElement,
+                    expandIcon: "filter",
+                    group: "top-left"
+                });
+               
+            view.whenLayerView(graveLayer).then((layerView) => {
+                branchLayerView = layerView;
+                // set up UI items
+                branchElement.style.visibility = "visible";
+
+            });
+
+          //clear the filters when user closes the expand widget
+          reactiveUtils.when(
+            () => !branchExpand.expanded,
+            () => {
+              branchLayerView.filter = null;
+            }
+          );
+
+            // Creates locator button 
+            const locateBtn = new Locate({
+                view: view
+            });
+            
+            //Creates a basemap gallery
+            const basemapGallery = new BasemapGallery({
+                view: view,        
+            });
+            
+            let baseGalleryExpand = new Expand({
+                expandIcon: "basemap",
+                view: view,
+                content: basemapGallery,
+                expanded: false,
+                });
+            
+            // Creates a search feature
+            const searchWidget = new Search({
+                view: view
+            });
+
+            // Allows search feature to collapse
+            let searchExpand = new Expand({
+                expandIcon: "search",           // sets icon of widget button
+                view: view,         
+                content: searchWidget,  
+                expanded: false                 // Sets to default collapsed
+            });
+                
+            // Creates a legend
+            const legend = new Legend({
+                view: view,
+                layerInfos: [
+                    {
+                        layer: graveLayer,
+                        title: "Gravesites"
+                    }
+                ]
+            });
+
+            // Allows search feature to collapse
+            let legendExpand = new Expand({
+                expandIcon: "legend",           // sets icon of widget button
+                view: view,         
+                content: legend,  
+                expanded: false                 // Sets to default collapsed
+            });
+
+            // Add the locate widget to the top left corner of the view
+            view.ui.add(locateBtn, "top-left");
+            
+            // Add the search widget to the top-left corner of the view
+            view.ui.add(searchExpand, "top-left");
+
+            //Add Branch filter
+            view.ui.add(branchExpand, "top-left");
+
+            //Adds a Basemap Gallery to top right corner
+            view.ui.add(baseGalleryExpand,"top-right")
+
+            // Add the legend to the bottom right corner of the view
+            view.ui.add(legendExpand, "top-right");
         });
-        map.add(graveLayer);
 
-        // Adding a measurement tool
-        const measureTool = new Measurement({
-            view: view,
-            activeTool: "area"
-        });
-        view.ui.add(measureTool, "top-right");
+    </script>
 
-        // Enhanced Search Widget
-        const searchWidget = new Search({
-            view: view,
-            sources: [{
-                layer: graveLayer,
-                searchFields: ["lName", "fName"],
-                displayField: "lName",
-                name: "Search Gravesites",
-                placeholder: "Search by Last or First Name"
-            }]
-        });
-        view.ui.add(searchWidget, "top-left");
+  </head>
+  
+  <body>
 
-        // Adding Locate Button
-        const locateBtn = new Locate({
-            view: view
-        });
-        view.ui.add(locateBtn, "top-left");
-    });
-</script>
-
-</head>
-
-<body>
+    <div id="branch-filter" class="esri-widget">
+      <div class="branch-item visible-branch" data-branch="Army">Army</div>
+      <div class="branch-item visible-branch" data-branch="Navy">Navy</div>
+      <div class="branch-item visible-branch" data-branch="Marines">Marines</div>
+      <div class="branch-item visible-branch" data-branch="Space Force">Space Force</div>
+      <div class="branch-item visible-branch" data-branch="Air Force">Air Force</div>
+      <div class="branch-item visible-branch" data-branch="Coast Guard">Coast Guard</div>
+    </div>
+    <!--Adds the survey button to the mobile website-->
+    <a href="https://arcg.is/15LbfP0"target="_blank" class="addRecordBtn">Add a Grave</a>
+    
+    <!--Div that holds the map element and all associated elements-->
     <div id="viewDiv"></div>
-</body>
 
+  </body>
 </html>
