@@ -86,8 +86,9 @@
             "esri/core/reactiveUtils",
             "esri/Graphic",
             "esri/layers/GraphicsLayer",
-            "esri/widgets/Legend" ],
-            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,UniqueValueRenderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer, Legend) => {
+            "esri/widgets/Legend",
+            "esri/widgets/Measurement" ],
+            (esriConfig, Map, MapView, Locate, Search, Expand, FeatureLayer,UniqueValueRenderer,SimpleFillSymbol, BasemapGallery, reactiveUtils, Graphics, GraphicsLayer, Legend, Measurement) => {
             
             esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurAToSzqkTfSfYwvNstkcR6B4ROIes9biB3If_N2cV-B6fHA1GnFu8UYHuEWyFnOteD6E3H-oh60eDMTzwhGTGcXtoWK5oBEpqdMWvQLIAQ-86Go8v986Wsqld8j-FJULmaeNFi1w4Zv_8Lph_HlTHNAwR-UeghYsPLclN0gRcydhH4niUxGof2iEFBvo2htCm0vSenHRMYskVeUeNTguRtJTczsQIvV5F0BO5DFjtzp-AT1_NemGJCXS";
             let branchLayerView;
@@ -136,64 +137,15 @@
                 ]
             };
 
-                // Create unique value renderer for graveLayer
+                // Create unique value renderer for graveLayer, made the code a bit more compact and neat
                 const graveRenderer = new UniqueValueRenderer({
                 field: "branch",
                 uniqueValueInfos: [
-                    {
-                        value: "Army",
-                        symbol: {
-                            type: "simple-marker",
-                            color: "green",
-                            size: "8px"
-                        },
-                        label: "Army"
-                    },
-                    {
-                        value: "Navy",
-                        symbol: {
-                            type: "simple-marker",
-                            color: "blue",
-                            size: "8px"
-                        },
-                        label: "Navy"
-                    },
-                    {
-                        value: "Marines",
-                        symbol: {
-                            type: "simple-marker",
-                            color: "red",
-                            size: "8px"
-                        },
-                        label: "Marines"
-                    },
-                    {
-                        value: "Space Force",
-                        symbol: {
-                            type: "simple-marker",
-                            color: "purple",
-                            size: "8px"
-                        },
-                        label: "Space Force"
-                    },
-                    {
-                        value: "Air Force",
-                        symbol: {
-                            type: "simple-marker",
-                            color: "cyan",
-                            size: "8px"
-                        },
-                        label: "Air Force"
-                    },
-                    {
-                        value: "Coast Guard",
-                        symbol: {
-                            type: "simple-marker",
-                            color: "orange",
-                            size: "8px"
-                        },
-                        label: "Coast Guard"
-                    }
+                    { value: "Army", symbol: { type: "simple-marker", color: "green", size: "8px" }, label: "Army" },
+                    { value: "Navy", symbol: { type: "simple-marker", color: "blue", size: "8px" }, label: "Navy" },
+                    { value: "Marines", symbol: { type: "simple-marker", color: "red", size: "8px" }, label: "Marines" },
+                    { value: "Air Force", symbol: { type: "simple-marker", color: "cyan", size: "8px" }, label: "Air Force" },
+                    { value: "Coast Guard", symbol: { type: "simple-marker", color: "orange", size: "8px" }, label: "Coast Guard" }
                 ]
             });
 
@@ -280,11 +232,24 @@
                 expanded: false,
                 });
             
-            // Creates a search feature
+            // Creates a search feature (enhanced search)
             const searchWidget = new Search({
-                view: view
+                view: view,
+                sources: [{
+                    layer: graveLayer,
+                    searchFields: ["lName", "fName"],
+                    displayField: "lName",
+                    name: "Search Gravesites",
+                    placeholder: "Search by Last or First Name"
+                }]
             });
 
+            // Adding a measurement tool
+            const measureTool = new Measurement({
+                view: view,
+                activeTool: "area"
+            });
+            
             // Allows search feature to collapse
             let searchExpand = new Expand({
                 expandIcon: "search",           // sets icon of widget button
@@ -325,7 +290,10 @@
             view.ui.add(baseGalleryExpand,"top-right")
 
             // Add the legend to the bottom right corner of the view
-            view.ui.add(legendExpand, "top-right");
+            view.ui.add(legendExpand, "bottom-right");
+
+            // Add Measurement tool 
+            view.ui.add(measureTool, "bottom-right");
         });
 
     </script>
